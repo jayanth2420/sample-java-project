@@ -17,7 +17,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Run tests (e.g., unit tests, integration tests)"
-                //sh 'mvn test'
+                sh 'mvn test'
             }
         }
         stage('Deploy to QA') {
