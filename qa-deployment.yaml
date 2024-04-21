@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-java-project-qa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-java-project
+      env: qa
+  template:
+    metadata:
+      labels:
+        app: sample-java-project
+        env: qa
+    spec:
+      containers:
+        - name: sample-java-project
+          image: your-registry/sample-java-project:qa
+          ports:
+            - containerPort: 8080

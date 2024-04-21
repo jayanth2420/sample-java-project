@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-java-project-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-java-project
+      env: prod
+  template:
+    metadata:
+      labels:
+        app: sample-java-project
+        env: prod
+    spec:
+      containers:
+        - name: sample-java-project
+          image: your-registry/sample-java-project:prod
+          ports:
+            - containerPort: 8080
