@@ -21,7 +21,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Run tests (e.g., unit tests, integration tests)"
-                bat "mvn test"
+               bat "mvn ${params.MAVEN_COMMAND}"
             }
         }
         stage('Deploy to QA') {
