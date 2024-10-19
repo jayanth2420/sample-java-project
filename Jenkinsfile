@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'MAVEN_COMMAND', defaultValue: 'clean package', description: 'Maven command to run')
+        choice(name: 'MAVEN_COMMAND', choices: ['clean package', 'clean install', 'test'], description: 'Select a Maven command to run')
     }
 
     stages {
@@ -14,14 +14,14 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Build your project using the specified Maven command
+                // Build your project using the selected Maven command
                 bat "mvn ${params.MAVEN_COMMAND}"
             }
         }
         stage('Test') {
             steps {
                 echo "Run tests (e.g., unit tests, integration tests)"
-               bat "mvn ${params.MAVEN_COMMAND}"
+                bat "mvn ${params.MAVEN_COMMAND}"
             }
         }
         stage('Deploy to QA') {
