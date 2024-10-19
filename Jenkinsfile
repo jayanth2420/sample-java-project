@@ -11,13 +11,13 @@ pipeline {
         stage('Build') {
             steps {
                 // Build your project (e.g., compile code, package artifacts)
-                sh 'mvn clean package'
+                bat 'mvn clean package'
             }
         }
         stage('Test') {
             steps {
                 echo "Run tests (e.g., unit tests, integration tests)"
-                sh 'mvn test'
+                bat 'mvn test'
             }
         }
         stage('Deploy to QA') {
