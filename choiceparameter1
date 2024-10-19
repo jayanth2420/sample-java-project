@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'MAVEN_COMMAND', defaultValue: 'clean package', description: 'Maven command to run')
+        choice(name: 'ENVIRONMENT', choices: ['QA', 'Production'], description: 'Select the deployment environment')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout source code from Git repository
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'f0f7fd4c-11e6-4f16-8563-4f503e476d39', url: 'https://github.com/jayanth2420/sample-java-project.git']])
+            }
+        }
+        stage('Build') {
+            steps {
+                // Build your project using the specified Maven command
+                bat "mvn ${params.MAVEN_COMMAND}"
+            }
+        }
+        stage('Test') {
+            steps {
+                // Run tests
+                bat "mvn test"
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    if (params.ENVIRONMENT == 'QA') {
+                        echo "Deploying to QA environment"
+                        //sh 'kubectl apply -f qa-deployment.yaml'
+                    } else if (params.ENVIRONMENT == 'Production') {
+                        echo "Deploying to Production environment"
+                        //sh 'kubectl apply -f prod-deployment.yaml'
+                    }
+                }
+            }
+            post {
+                success {
+                    echo "Deployment to ${params.ENVIRONMENT} succeeded!"
+                }
+                failure {
+                    echo "Deployment to ${params.ENVIRONMENT} failed!"
+                }
+            }
+        }
+    }
+}
