@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout source code from Git repository
-                git 'https://github.com/jayanth2420/sample-java-project.git'
+               checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'f0f7fd4c-11e6-4f16-8563-4f503e476d39', url: 'https://github.com/jayanth2420/sample-java-project.git']])
             }
         }
         stage('Build') {
