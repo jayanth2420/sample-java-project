@@ -3,6 +3,7 @@ pipeline {
     
     parameters {
         string(name: 'MAVEN_COMMAND', defaultValue: 'clean package', description: 'Maven command to run')
+        choice(name: 'ENVIRONMENT', choices: ['QA', 'Production'], description: 'Select the deployment environment')
     }
 
     stages {
@@ -20,45 +21,28 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo "Run tests (e.g., unit tests, integration tests)"
-               bat "mvn ${params.MAVEN_COMMAND}"
+                // Run tests
+                bat "mvn test"
             }
         }
-        stage('Deploy to QA') {
+        stage('Deploy') {
             steps {
-                echo "Deploy to QA environment"
-                //sh 'kubectl apply -f qa-deployment.yaml'
+                script {
+                    if (params.ENVIRONMENT == 'QA') {
+                        echo "Deploying to QA environment"
+                        //sh 'kubectl apply -f qa-deployment.yaml'
+                    } else if (params.ENVIRONMENT == 'Production') {
+                        echo "Deploying to Production environment"
+                        //sh 'kubectl apply -f prod-deployment.yaml'
+                    }
+                }
             }
             post {
                 success {
-                    // Notify success
-                    echo 'Deployment to QA succeeded!'
+                    echo "Deployment to ${params.ENVIRONMENT} succeeded!"
                 }
                 failure {
-                    // Notify failure
-                    echo 'Deployment to QA failed!'
-                }
-            }
-        }
-        stage('Deploy to Production') {
-            when {
-                // Only deploy to production if previous stages were successful
-                expression {
-                    currentBuild.result == 'SUCCESS'
-                }
-            }
-            steps {
-                echo "Deploy to production environment"
-                //sh 'kubectl apply -f prod-deployment.yaml'
-            }
-            post {
-                success {
-                    // Notify success
-                    echo 'Deployment to production succeeded!'
-                }
-                failure {
-                    // Notify failure
-                    echo 'Deployment to production failed!'
+                    echo "Deployment to ${params.ENVIRONMENT} failed!"
                 }
             }
         }
